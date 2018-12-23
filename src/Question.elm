@@ -1,4 +1,4 @@
-module Question exposing (Model, Msg, view, update, init)
+module Question exposing (Model, Msg (..), view, update, init)
 
 import Html exposing (Html, div, span)
 import Html.Attributes
@@ -24,12 +24,34 @@ type alias Model =
     , problem: Problem
     }
 
+type alias UserResult =
+    { start: Time.Posix
+    , finish: Time.Posix
+    , correct: Bool
+    , factors: (Int, Int)
+    }
+
 type Msg
+    = Internal InternalMsgs
+    | External ExternalMsgs
+
+type InternalMsgs
     = Input String
     | FormSubmit
     | FocusResult ( Result Browser.Dom.Error () )
 
-update : Msg -> Model -> (Model, Cmd Msg)
+type ExternalMsgs = Finished UserResult
+
+sendReportMessage: Bool -> (Int, Int) -> Time.Posix -> Time.Posix -> Msg
+sendReportMessage correct factors startTime finishTime =
+    External <| Finished
+        { start = startTime
+        , finish = finishTime
+        , correct = correct
+        , factors = factors
+        }
+
+update : InternalMsgs -> Model -> (Model, Cmd Msg)
 update msg model =
     case msg of
         Input value ->
@@ -44,9 +66,20 @@ update msg model =
             in
                 ( { model | currentValue = parseResult }, Cmd.none )
 
-        FormSubmit -> Debug.todo "Question.update: Form Submit not yet implemented"
+        FormSubmit ->
+            case model.currentValue of
+                Empty -> ( model, Cmd.none )
+                Error _ -> ( model, Cmd.none )
+                Valid value ->
+                    let
+                        factor1 = model.problem.factor1
+                        factor2 = model.problem.factor2
+                        correct = factor1 + factor2 == value
+                        reportFn = sendReportMessage correct (factor1, factor2) model.start
+                    in
+                        ( model, Task.perform reportFn Time.now)
 
-        FocusResult result -> Debug.log "Finished focus" ( model, Cmd.none )
+        FocusResult result -> ( model, Cmd.none )
 
 displayValue : InputValues -> String
 displayValue input =
@@ -63,7 +96,7 @@ view model =
         factor2 = span [] [ String.fromInt model.problem.factor2 |> Html.text ]
         input = Html.input
             [ Html.Attributes.value ( displayValue model.currentValue )
-            , Html.Events.onInput Input
+            , Html.Events.onInput (Input >> Internal)
             , Html.Attributes.id "answer-input"
             ] []
         fullQuestion = span [] [factor1, textSpan " + ", factor2, textSpan " = "]
@@ -71,7 +104,7 @@ view model =
         div [ Html.Attributes.id "question-container" ]
             [ fullQuestion
             , Html.form
-                [ Html.Events.onSubmit FormSubmit
+                [ Html.Events.onSubmit (Internal FormSubmit)
                 , Html.Attributes.id "question-form"
                 ]
 
@@ -86,7 +119,7 @@ init number1 number2 startTime =
             , factor2 = number2
             }
 
-        focusCmd = Browser.Dom.focus "answer-input" |> Task.attempt FocusResult
+        focusCmd = Browser.Dom.focus "answer-input" |> Task.attempt (FocusResult >> Internal)
     in
         ( { start = startTime
         , currentValue = Empty

@@ -79,10 +79,13 @@ liftToParent modelLift msgLift ( subModel, subCmd ) =
 updateLocalModel: Msg -> LocalModel -> ( LocalModel, Cmd Msg )
 updateLocalModel msg localModel =
     case (msg, localModel) of
-        (QuestionMsg innerMsg, QuestionModel innerModel) ->
+        (QuestionMsg (Question.Internal innerMsg), QuestionModel innerModel) ->
             Question.update innerMsg innerModel |> liftToParent QuestionModel QuestionMsg
 
-        (_, _) -> Debug.todo "Got a time message in the localUpdate, this should not happen"
+        (QuestionMsg (Question.External external), QuestionModel model) ->
+            Debug.log "Got finished" ( localModel, Cmd.none )
+
+        (_, _) -> Debug.todo "Got an unmapped message"
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg globalModel =
