@@ -3,6 +3,7 @@ module Main exposing (main)
 import Browser
 import Debug
 import Html
+import Html.Attributes
 import Random
 import Question
 import Time
@@ -60,15 +61,23 @@ viewQuestion ( Question num1 num2 ) answer =
     in
         Html.div [] [ questionHtml ]
 
-viewLocal : LocalModel -> Browser.Document Msg
+viewLocal : LocalModel -> Html.Html Msg
 viewLocal model =
     case model of
-        QuestionModel subModel -> [ Question.view subModel |> Html.map QuestionMsg ] |> Browser.Document "Math Quiz"
+        QuestionModel subModel -> Question.view subModel |> Html.map QuestionMsg
 
-        _ -> [ Html.div [] [ Html.text "Initializing" ] ] |> Browser.Document "Initializing"
+        _ -> Html.div [] [ Html.text "Initializing" ]
+
+wrapperDiv : String -> Html.Html msg -> Html.Html msg
+wrapperDiv className toWrap =
+    Html.div [ Html.Attributes.class className ] [ toWrap ]
 
 view : Model -> Browser.Document Msg
-view model = viewLocal model.localModel
+view model = 
+    let 
+        localHtml = viewLocal model.localModel
+    in
+        [ wrapperDiv "app-container" localHtml ] |> Browser.Document "Math-Quiz"
 
 liftToParent : ( subModel -> model ) -> ( subMsg -> Msg ) -> ( subModel, Cmd subMsg ) -> ( model, Cmd Msg )
 liftToParent modelLift msgLift ( subModel, subCmd ) =

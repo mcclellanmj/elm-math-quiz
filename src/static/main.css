@@ -1,0 +1,26 @@
+:root {
+  --main-font-color: #333;
+}
+
+body {
+  color: var(--main-font-color);
+  margin: 0;
+}
+
+.app-container {
+  width: 500px;
+  margin: 0 auto;
+}
+
+.question-container {
+  --question-font-size: 40px;
+  font-size: var(--question-font-size);
+}
+
+#answer-input {
+  border: 0 none;
+  border-bottom: 1px solid var(--main-font-color);
+  max-width: 3.5em;
+  text-align: center;
+  font-size: var(--question-font-size);
+}
