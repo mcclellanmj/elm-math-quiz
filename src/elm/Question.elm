@@ -1,4 +1,4 @@
-module Question exposing (Model, Msg (..), view, update, init)
+module Question exposing (Model, Msg (..), view, update, init, UserResult)
 
 import Html exposing (Html, div, span)
 import Html.Attributes

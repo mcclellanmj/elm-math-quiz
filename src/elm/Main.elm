@@ -8,6 +8,7 @@ import Random
 import Question
 import Time
 import Task
+import QuestionResult
 
 type alias Flags =
     { randomSeed: Int
