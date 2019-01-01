@@ -5,10 +5,12 @@ import Debug
 import Html
 import Html.Attributes
 import Random
-import Question
 import Time
 import Task
+
+import Question
 import QuestionResult
+import GlobalTypes exposing ( GlobalMsg, UserResult )
 
 type alias Flags =
     { randomSeed: Int
@@ -19,15 +21,19 @@ type Question = Question Int Int
 type LocalModel
     = Initial (Int, Int)
     | QuestionModel Question.Model
+    | QuestionResultModel QuestionResult.Model
 
 type alias Model =
     { currentSeed: Random.Seed
     , localModel: LocalModel
     }
 
+type MainMsg = InitialTime Time.Posix
+
 type Msg
     = TimeMsg Time.Posix
     | QuestionMsg Question.Msg
+    | QuestionResultMsg QuestionResult.Msg
 
 reversePairWith : x -> y -> (y, x)
 reversePairWith x y = (y, x)
@@ -67,7 +73,9 @@ viewLocal model =
     case model of
         QuestionModel subModel -> Question.view subModel |> Html.map QuestionMsg
 
-        _ -> Html.div [] [ Html.text "Initializing" ]
+        QuestionResultModel subModel -> QuestionResult.view subModel |> Html.map QuestionResultMsg
+
+        Initial _ -> Html.div [] [ Html.text "Initializing" ]
 
 wrapperDiv : String -> Html.Html msg -> Html.Html msg
 wrapperDiv className toWrap =
@@ -92,10 +100,16 @@ updateLocalModel msg localModel =
         (QuestionMsg (Question.Internal innerMsg), QuestionModel innerModel) ->
             Question.update innerMsg innerModel |> liftToParent QuestionModel QuestionMsg
 
-        (QuestionMsg (Question.External external), QuestionModel model) ->
-            Debug.log "Got finished" ( localModel, Cmd.none )
+        (QuestionMsg ( Question.External (Question.Finished userResult) ), QuestionModel model) ->
+            let
+                ( newModel, newMsg ) = QuestionResult.init userResult
+            in
+                ( QuestionResultModel newModel, Cmd.map QuestionResultMsg newMsg )
 
-        (_, _) -> Debug.todo "Got an unmapped message"
+        (QuestionResultMsg (QuestionResult.Internal innerMsg), QuestionResultModel model) ->
+            QuestionResult.update innerMsg model |> liftToParent QuestionResultModel QuestionResultMsg
+
+        (_, _) -> ( localModel, Cmd.none )
 
 update : Msg -> Model -> (Model, Cmd Msg)
 update msg globalModel =

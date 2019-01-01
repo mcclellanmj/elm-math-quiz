@@ -1,6 +1,8 @@
 module QuestionResult exposing (Model, Msg (..), view, update, init)
 
-import Question exposing (UserResult)
+import Html exposing ( Html, div, text )
+
+import GlobalTypes exposing ( UserResult )
 
 type InternalMsgs =
   RandomGif String
@@ -32,6 +34,7 @@ init userResult =
     ( initModel, Cmd.none )
 
 update : InternalMsgs -> Model -> ( Model, Cmd Msg )
-update = Debug.todo "QuestionResult.update not implemented"
+update msg model = ( model, Cmd.none )
 
-view = Debug.todo "QuestionResult.view not implemented"
+view : Model -> Html Msg
+view model = div [] [ text "The end!" ]

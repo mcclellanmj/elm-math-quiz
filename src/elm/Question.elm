@@ -1,12 +1,13 @@
-module Question exposing (Model, Msg (..), view, update, init, UserResult)
+module Question exposing (Model, Msg (..), ExternalMsgs (..), view, update, init)
 
-import Html exposing (Html, div, span)
+import Html exposing ( Html, div, span )
 import Html.Attributes
 import Html.Events
 import Debug
 import Time
 import Browser.Dom
 import Task
+import GlobalTypes exposing ( UserResult )
 
 type alias Problem =
     { factor1: Int
@@ -22,13 +23,6 @@ type alias Model =
     { start: Time.Posix
     , currentValue: InputValues
     , problem: Problem
-    }
-
-type alias UserResult =
-    { start: Time.Posix
-    , finish: Time.Posix
-    , correct: Bool
-    , factors: (Int, Int)
     }
 
 type Msg
