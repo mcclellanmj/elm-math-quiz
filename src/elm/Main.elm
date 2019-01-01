@@ -58,6 +58,18 @@ init flags =
     in
         ( model, Task.perform TimeMsg Time.now )
 
+restart : Model -> ( Model, Cmd Msg )
+restart model =
+    let 
+        ( numbers, seed ) = generateNumbers model.currentSeed
+        newModel = 
+            { currentSeed = seed
+            , localModel = Initial numbers
+            }
+    in
+        ( newModel, Task.perform TimeMsg Time.now )
+
+
 viewQuestion : Question -> String -> Html.Html Msg
 viewQuestion ( Question num1 num2 ) answer =
     let
@@ -121,6 +133,9 @@ update msg globalModel =
                 ( { globalModel | localModel = QuestionModel questionModel }, Cmd.map QuestionMsg questionCmd )
 
         ( TimeMsg timeMsg, _ ) -> Debug.log "Got a time message when not in initial state" ( globalModel, Cmd.none )
+
+        ( QuestionResultMsg (QuestionResult.External QuestionResult.NextQuestion), model ) ->
+            restart globalModel
 
         ( _, model ) ->
             let
