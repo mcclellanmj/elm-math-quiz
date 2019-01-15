@@ -3,7 +3,6 @@ module Question exposing (Model, Msg (..), ExternalMsgs (..), view, update, init
 import Html exposing ( Html, div, span )
 import Html.Attributes
 import Html.Events
-import Debug
 import Time
 import Browser.Dom
 import Task

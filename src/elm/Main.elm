@@ -47,6 +47,10 @@ generateNumbers seed =
     in
         Random.step finalGenerator seed
 
+generateRewardIndex : Random.Seed -> ( Int, Random.Seed )
+generateRewardIndex seed =
+    Random.step (Random.int 1 300) seed
+
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     let
@@ -112,12 +116,6 @@ updateLocalModel msg localModel =
         (QuestionMsg (Question.Internal innerMsg), QuestionModel innerModel) ->
             Question.update innerMsg innerModel |> liftToParent QuestionModel QuestionMsg
 
-        (QuestionMsg ( Question.External (Question.Finished userResult) ), QuestionModel model) ->
-            let
-                ( newModel, newMsg ) = QuestionResult.init userResult
-            in
-                ( QuestionResultModel newModel, Cmd.map QuestionResultMsg newMsg )
-
         (QuestionResultMsg (QuestionResult.Internal innerMsg), QuestionResultModel model) ->
             QuestionResult.update innerMsg model |> liftToParent QuestionResultModel QuestionResultMsg
 
@@ -134,8 +132,18 @@ update msg globalModel =
 
         ( TimeMsg timeMsg, _ ) -> Debug.log "Got a time message when not in initial state" ( globalModel, Cmd.none )
 
-        ( QuestionResultMsg (QuestionResult.External QuestionResult.NextQuestion), model ) ->
+        ( QuestionResultMsg (QuestionResult.External QuestionResult.NextQuestion), _ ) ->
             restart globalModel
+
+        (QuestionMsg ( Question.External (Question.Finished userResult) ), QuestionModel _ ) ->
+            let
+                ( rewardIndex, newSeed ) = generateRewardIndex globalModel.currentSeed
+                ( innerModel, innerMsg ) = QuestionResult.init rewardIndex userResult
+                localModel = QuestionResultModel innerModel
+                newMsg = Cmd.map QuestionResultMsg innerMsg
+                newModel = { globalModel | localModel = localModel, currentSeed = newSeed }
+            in
+                ( newModel, newMsg )
 
         ( _, model ) ->
             let

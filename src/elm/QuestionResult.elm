@@ -6,11 +6,12 @@ import Html.Events
 import Browser.Dom
 import Task
 import Http
+import Json.Decode exposing ( Decoder, field, string, at )
 
 import GlobalTypes exposing ( UserResult )
 
 type InternalMsgs
-  = RandomGif String
+  = GifResult ( Result Http.Error String )
   | FocusResult ( Result Browser.Dom.Error () )
 
 type ExternalMsgs =
@@ -21,7 +22,7 @@ type Msg
   | External ExternalMsgs
 
 type State
-  = Initializing
+  = Initializing Int
   | ShowImage String
 
 type alias Model = 
@@ -29,12 +30,12 @@ type alias Model =
   , state: State
   }
 
-init : UserResult -> ( Model, Cmd Msg )
-init userResult = 
+init : Int -> UserResult -> ( Model, Cmd Msg )
+init random userResult =
   let
     initModel = 
       { result = userResult
-      , state = Initializing
+      , state = Initializing random
       }
     focusCmd = Browser.Dom.focus "submit-button" |> Task.attempt (FocusResult >> Internal)
   in
@@ -47,7 +48,7 @@ view : Model -> Html Msg
 view model = 
   let
     result = if model.result.correct then "Correct!" else "Wrong!"
-    button = Html.button 
+    button = Html.button
       [ Html.Events.onClick (External NextQuestion)
       , Html.Attributes.id "submit-button" ]
 
@@ -55,14 +56,12 @@ view model =
   in
     div [] [ text result, button ]
 
--- getRandomGif : String -> Cmd Msg
--- getRandomGif topic =
-  -- let
-    -- url =
-      -- "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" ++ topic
-  -- in
-    -- Http.send ShowImage (Http.get url decodeGifUrl)
+getRandomGif : Int -> String -> Cmd Msg
+getRandomGif index topic =
+    Http.get
+      { url = "https://api.giphy.com/v1/gifs/random?api_key=dc6zaTOxFJmzC&tag=" ++ topic
+      , expect = Http.expectJson ( GifResult >> Internal ) decodeGifUrl }
 
--- decodeGifUrl : Decode.Decoder String
--- decodeGifUrl =
-  -- Decode.at ["data", "image_url"] Decode.string
+decodeGifUrl : Decoder String
+decodeGifUrl =
+  at ["data", "image_url"] string
