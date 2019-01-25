@@ -49,7 +49,7 @@ generateNumbers seed =
 
 generateRewardIndex : Random.Seed -> ( Int, Random.Seed )
 generateRewardIndex seed =
-    Random.step (Random.int 1 300) seed
+    Random.step (Random.int 1 150) seed
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =

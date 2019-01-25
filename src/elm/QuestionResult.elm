@@ -8,6 +8,8 @@ import Task
 import Http
 import Url.Builder
 import Json.Decode exposing ( Decoder, field, string, at, index )
+import Time.Extra
+import Time
 
 import GlobalTypes exposing ( UserResult )
 
@@ -31,6 +33,16 @@ type alias Model =
   , state: State
   }
 
+determineReward : UserResult -> String
+determineReward result =
+  case result.correct of
+    True ->
+      let
+        diffSeconds = Time.Extra.diff Time.Extra.Second Time.utc result.start result.finish
+      in
+        if diffSeconds < 3 then "hedgehog pet" else "turtle pet"
+    False -> "disappointed"
+
 init : Int -> UserResult -> ( Model, Cmd Msg )
 init random userResult =
   let
@@ -39,7 +51,8 @@ init random userResult =
       , state = Initializing random
       }
     focusCmd = Browser.Dom.focus "submit-button" |> Task.attempt (FocusResult >> Internal)
-    requestImageCmd = getRandomGif random "hedgehog pet"
+    rewardTopic = determineReward userResult
+    requestImageCmd = determineReward userResult |> getRandomGif random
   in
     ( initModel, Cmd.batch [ focusCmd, requestImageCmd ] )
 
@@ -70,7 +83,7 @@ view model =
       [ Html.text "Submit" ]
     rewardImage = viewReward model.state
   in
-    div [] [ text result, button, rewardImage ]
+    div [] [ text result, rewardImage, button ]
 
 getRandomGif : Int -> String -> Cmd Msg
 getRandomGif index topic =
@@ -78,12 +91,13 @@ getRandomGif index topic =
       compiledUrl =
         Url.Builder.crossOrigin "https://api.giphy.com"
           [ "v1", "gifs", "search" ]
+          
           [ Url.Builder.string "api_key" "YyFNENNsyV9REr81iH35J5T6OMAltEOz"
           , Url.Builder.string "q" topic
           , Url.Builder.int "limit" 1
           , Url.Builder.int "offset" index
           , Url.Builder.string "rating" "G"
-          , Url.Builder.string "lang" "en" ]
+          ]
     in
       Http.get
         { url = compiledUrl
