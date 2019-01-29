@@ -3,3 +3,4 @@ elm.js
 *.iml 
 elm-stuff 
 dist
+node_modules/

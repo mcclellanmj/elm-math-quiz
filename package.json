@@ -1,0 +1,25 @@
+{
+  "name": "math-quiz",
+  "version": "1.0.0",
+  "description": "",
+  "main": "gulpfile.js",
+  "dependencies": {},
+  "devDependencies": {
+    "browser-sync": "^2.26.3",
+    "gulp": "^4.0.0",
+    "gulp-elm": "^0.8.1"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mcclellanmj/elm-math-quiz.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/mcclellanmj/elm-math-quiz/issues"
+  },
+  "homepage": "https://github.com/mcclellanmj/elm-math-quiz#readme"
+}
