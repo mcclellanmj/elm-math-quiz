@@ -1,10 +1,18 @@
 :root {
-  --main-font-color: #333;
+  --main-font-color: #554C58;
+  --background-color: #F6F1F5;
+  --question-font-size: 55px;
 }
 
 body {
   color: var(--main-font-color);
+  background-color: var(--background-color);
   margin: 0;
+}
+
+button {
+  background-color: #66446E;
+  color: var(--background-color);
 }
 
 .app-container {
@@ -13,14 +21,18 @@ body {
 }
 
 .question-container {
-  --question-font-size: 40px;
   font-size: var(--question-font-size);
 }
 
 #answer-input {
   border: 0 none;
   border-bottom: 1px solid var(--main-font-color);
-  max-width: 3.5em;
+  max-width: 2.5em;
   text-align: center;
+  font-size: var(--question-font-size);
+  background-color: var(--background-color);
+}
+
+#question-span {
   font-size: var(--question-font-size);
 }

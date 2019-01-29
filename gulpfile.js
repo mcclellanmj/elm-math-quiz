@@ -16,7 +16,8 @@ gulp.task('elm', function(){
 gulp.task('serve', gulp.series('static', 'elm', function() {
   browserSync.init({
     server: 'dist/',
-    cors: true
+    cors: true,
+    index: 'index.html'
   });
 
   gulp.watch('src/elm', gulp.series('elm'));
