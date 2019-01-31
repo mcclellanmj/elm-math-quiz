@@ -1,7 +1,7 @@
 :root {
   --main-font-color: #554C58;
   --background-color: #F6F1F5;
-  --question-font-size: 55px;
+  --question-font-size: 50px;
 }
 
 body {
@@ -13,21 +13,42 @@ body {
 button {
   background-color: #66446E;
   color: var(--background-color);
+  border: 1px solid;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 40px;
 }
 
 .app-container {
-  width: 500px;
+  max-width: 500px;
   margin: 0 auto;
-}
-
-.question-container {
   font-size: var(--question-font-size);
 }
 
+#question-form {
+  display: grid;
+  grid-template-rows: 20% 60% 20%;
+  grid-template-areas:
+    "header"
+    "middle"
+    "bottom";
+  height: 100vh;
+  max-height: 800px;
+  text-align: center;
+  align-items: center;
+}
+
+#button-container {
+  grid-area: bottom;
+}
+
 #answer-input {
+  font-family: serif;
+  color: var(--main-font-color);
   border: 0 none;
   border-bottom: 1px solid var(--main-font-color);
-  max-width: 2.5em;
+  max-width: 2em;
   text-align: center;
   font-size: var(--question-font-size);
   background-color: var(--background-color);
@@ -35,4 +56,23 @@ button {
 
 #question-span {
   font-size: var(--question-font-size);
+}
+
+#result-container {
+  display: grid;
+  grid-template-rows: 20% 60% 20%;
+  text-align: center;
+  align-items: center;
+  height: 100vh;
+  max-height: 800px;
+}
+
+#reward-image {
+  max-height: 100%;
+  max-width: 100%;
+  height: auto;
+  width: auto;
+  min-height: 100%;
+  min-width: 100%;
+  object-fit: contain;
 }

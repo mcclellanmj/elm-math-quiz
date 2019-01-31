@@ -1,7 +1,7 @@
 module QuestionResult exposing (Model, Msg (..), ExternalMsgs (..), view, update, init)
 
 import Html exposing ( Html, div, text )
-import Html.Attributes
+import Html.Attributes exposing ( id )
 import Html.Events
 import Browser.Dom
 import Task
@@ -33,14 +33,18 @@ type alias Model =
   , state: State
   }
 
+isSlow : Time.Posix -> Time.Posix -> Bool
+isSlow start end =
+  let
+    diffSeconds = Time.Extra.diff Time.Extra.Second Time.utc start end
+  in
+    diffSeconds > 5
+
 determineReward : UserResult -> String
 determineReward result =
   case result.correct of
     True ->
-      let
-        diffSeconds = Time.Extra.diff Time.Extra.Second Time.utc result.start result.finish
-      in
-        if diffSeconds < 3 then "hedgehog pet" else "turtle pet"
+        if isSlow result.start result.finish then "turtle pet" else "hedgehog pet"
     False -> "disappointed"
 
 init : Int -> UserResult -> ( Model, Cmd Msg )
@@ -68,22 +72,24 @@ update msg model =
 viewReward : State -> Html Msg
 viewReward state =
   case state of
-      Initializing x -> Html.span [] [ text (String.fromInt x) ]
+      Initializing x -> Html.img [ Html.Attributes.src "loading.gif", id "reward-image" ] [ ]
 
-      ShowImage x -> Html.img [ Html.Attributes.src x ] []
+      ShowImage x -> Html.img [ Html.Attributes.src x, id "reward-image" ] []
 
 view : Model -> Html Msg
 view model = 
   let
-    result = if model.result.correct then "Correct!" else "Wrong!"
+    result = if model.result.correct then
+        if isSlow model.result.start model.result.finish then "A Little Slow!" else "Correct!"
+      else "Wrong!"
     button = Html.button
       [ Html.Events.onClick (External NextQuestion)
-      , Html.Attributes.id "submit-button" ]
+      , id "submit-button" ]
 
-      [ Html.text "Submit" ]
+      [ Html.text ">" ]
     rewardImage = viewReward model.state
   in
-    div [] [ text result, rewardImage, button ]
+    div [ id "result-container" ] [ div [] [text result], rewardImage, div [] [button] ]
 
 getRandomGif : Int -> String -> Cmd Msg
 getRandomGif index topic =

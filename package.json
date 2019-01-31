@@ -10,7 +10,7 @@
     "gulp-elm": "^0.8.1"
   },
   "scripts": {
-    "test": "test"
+    "serve": "gulp serve"
   },
   "repository": {
     "type": "git",

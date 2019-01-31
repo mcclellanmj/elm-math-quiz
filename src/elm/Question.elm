@@ -100,7 +100,7 @@ view model =
                 [ Html.Events.onSubmit (Internal FormSubmit)
                 , Html.Attributes.id "question-form"
                 ]
-                [ div [] [fullQuestion, input], div [] [button] ]
+                [ div [] [fullQuestion, input], div [ Html.Attributes.id "button-container" ] [button] ]
             ]
 
 init : Int -> Int -> Time.Posix -> (Model, Cmd Msg)
