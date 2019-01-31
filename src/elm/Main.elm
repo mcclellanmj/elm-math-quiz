@@ -41,8 +41,8 @@ reversePairWith x y = (y, x)
 generateNumbers : Random.Seed -> ( (Int, Int), Random.Seed )
 generateNumbers seed =
     let
-        firstGenerator = Random.int 1 19
-        secondFunction first = Random.map (reversePairWith first) ( Random.int 1 (20 - first) )
+        firstGenerator = Random.int 1 20
+        secondFunction first = Random.map (reversePairWith first) ( Random.int 0 (20 - first) )
         finalGenerator = firstGenerator |> Random.andThen secondFunction
     in
         Random.step finalGenerator seed

@@ -30,7 +30,7 @@ gulp.task('serve', gulp.series('static', 'elmDebug', function() {
     index: 'index.html'
   });
 
-  gulp.watch('src/elm', gulp.series('elm'));
+  gulp.watch('src/elm', gulp.series('elmDebug'));
   gulp.watch('src/static', gulp.series('static'));
   gulp.watch('dist').on('change', browserSync.reload);
 }));
