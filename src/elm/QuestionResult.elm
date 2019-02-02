@@ -81,7 +81,7 @@ view model =
   let
     result = if model.result.correct then
         if isSlow model.result.start model.result.finish then "A Little Slow!" else "Correct!"
-      else "Wrong!"
+      else "Try Again"
     button = Html.button
       [ Html.Events.onClick (External NextQuestion)
       , id "submit-button" ]
