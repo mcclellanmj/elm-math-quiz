@@ -33,7 +33,7 @@ button {
     "header"
     "middle"
     "bottom";
-  height: 100vh;
+  height: calc(100vh - 50px);
   max-height: 800px;
   text-align: center;
   align-items: center;
@@ -63,7 +63,7 @@ button {
   grid-template-rows: 20% 60% 20%;
   text-align: center;
   align-items: center;
-  height: 100vh;
+  height: calc(100vh - 50px);
   max-height: 800px;
 }
 

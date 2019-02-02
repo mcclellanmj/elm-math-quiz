@@ -91,6 +91,7 @@ view model =
             [ Html.Attributes.value ( displayValue model.currentValue )
             , Html.Events.onInput (Input >> Internal)
             , Html.Attributes.id "answer-input"
+            , Html.Attributes.type_ "number"
             ] []
         button = Html.button [ Html.Attributes.id "submit-question-button" ] [ Html.text ">" ]
         fullQuestion = span [ Html.Attributes.id "question-span" ] [factor1, textSpan " + ", factor2, textSpan " = "]
