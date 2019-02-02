@@ -93,7 +93,6 @@ view model =
             , Html.Attributes.id "answer-input"
             , Html.Attributes.type_ "number"
             ] []
-        button = Html.button [ Html.Attributes.id "submit-question-button" ] [ Html.text ">" ]
         fullQuestion = span [ Html.Attributes.id "question-span" ] [factor1, textSpan " + ", factor2, textSpan " = "]
     in
         div [ Html.Attributes.id "question-container" ]
@@ -101,7 +100,7 @@ view model =
                 [ Html.Events.onSubmit (Internal FormSubmit)
                 , Html.Attributes.id "question-form"
                 ]
-                [ div [] [fullQuestion, input], div [ Html.Attributes.id "button-container" ] [button] ]
+                [ div [] [fullQuestion, input] ]
             ]
 
 init : Int -> Int -> Time.Posix -> (Model, Cmd Msg)
